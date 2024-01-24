@@ -1,0 +1,95 @@
+FROM ubuntu:22.04
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt update && \
+    apt install -y \
+    git \
+    cmake \
+    ninja-build \
+    pkg-config \
+    ccache \
+    clang \
+    llvm \
+    lld \
+    binfmt-support \
+    libsdl2-dev \
+    libepoxy-dev \
+    libssl-dev \
+    python-setuptools \
+    g++-x86-64-linux-gnu \
+    nasm \
+    python3-clang \
+    libstdc++-10-dev-i386-cross \
+    libstdc++-10-dev-amd64-cross \
+    libstdc++-10-dev-arm64-cross \
+    squashfs-tools \
+    squashfuse \
+    libc-bin \
+    expect \
+    curl \
+    sudo \
+    fuse \
+    wget
+RUN useradd -m -s /bin/bash fex && \
+    usermod -aG sudo fex && \
+    useradd -m -s /bin/bash steam && \
+    echo "fex ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers.d/fex
+
+USER fex
+WORKDIR /home/fex
+
+RUN git clone --recurse-submodules https://github.com/FEX-Emu/FEX.git && \
+    cd FEX && \
+    mkdir Build && \
+    cd Build && \
+    CC=clang CXX=clang++ cmake -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release -DUSE_LINKER=lld -DENABLE_LTO=True -DBUILD_TESTS=False -DENABLE_ASSERTIONS=False -G Ninja .. && \
+    ninja && \
+    sudo ninja install && \
+    sudo ninja binfmt_misc_32 && \
+    sudo ninja binfmt_misc_64
+
+USER steam
+
+WORKDIR /home/steam/.fex-emu/RootFS/
+
+RUN mkdir Ubuntu && \
+    cd Ubuntu && \
+    curl -4 'https://www.dropbox.com/scl/fi/16mhn3jrwvzapdw50gt20/Ubuntu_22_04.tar.gz?rlkey=4m256iahwtcijkpzcv8abn7nf' -Lo Ubuntu.tar.gz && \
+    tar xzf Ubuntu.tar.gz && \
+    rm ./Ubuntu.tar.gz && \
+    cd ../../ && \
+    echo '{"Config":{"RootFS":"Ubuntu/Ubuntu_22_04"}}' > ./Config.json
+
+WORKDIR /home/steam/steamcmd
+
+RUN curl -sqL "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" | tar zxvf -
+
+USER root
+
+RUN echo 'root:steamcmd' | chpasswd && \
+    wget -q https://github.com/itzg/rcon-cli/releases/download/1.6.4/rcon-cli_1.6.4_linux_amd64.tar.gz -O - | tar -xz && \
+    mv rcon-cli /usr/bin/rcon-cli
+
+ENV PORT= \
+    PUID=1000 \
+    PGID=1000 \
+    PLAYERS= \
+    MULTITHREADING=false \
+    COMMUNITY=false \
+    PUBLIC_IP= \
+    PUBLIC_PORT= \
+    SERVER_PASSWORD= \
+    SERVER_NAME= \
+    ADMIN_PASSWORD= \
+    UPDATE_ON_BOOT=true \
+    RCON_ENABLED=true \
+    RCON_PORT=25575 \
+    QUERY_PORT=27015
+
+COPY ./scripts/* /home/steam/server/
+RUN chmod +x /home/steam/server/init.sh /home/steam/server/start.sh /home/steam/server/backup.sh
+RUN mv /home/steam/server/backup.sh /usr/local/bin/backup
+WORKDIR /home/steam/server
+HEALTHCHECK --start-period=5m \
+    CMD pgrep "PalServer-Linux" > /dev/null || exit 1
+EXPOSE ${PORT} ${RCON_PORT}
+ENTRYPOINT ["/home/steam/server/init.sh"]

@@ -1,6 +1,15 @@
 #!/bin/bash
 
+architecture=$(uname -m)
 STARTCOMMAND="./PalServer.sh"
+
+if [ ! -d /home/steam/.steam/sdk64/ ]; then
+    mkdir -p /home/steam/.steam/sdk64/
+fi
+
+if [ ! -e /home/steam/.steam/sdk64/steamclient.so ]; then
+    ln -s /home/steam/steamcmd/linux64/steamclient.so /home/steam/.steam/sdk64/
+fi
 
 if [ -n "${PORT}" ]; then
     STARTCOMMAND="${STARTCOMMAND} -port=${PORT}"
@@ -51,7 +60,7 @@ if [ ! -f /palworld/Pal/Saved/Config/LinuxServer/PalWorldSettings.ini ]; then
     printf "\e[0;32m*****GENERATING CONFIG*****\e[0m\n"
 
     # Server will generate all ini files after first run.
-    su steam -c "timeout --preserve-status 15s ./PalServer.sh 1> /dev/null "
+    su steam -c "FEXBash -c 'timeout --preserve-status 15s ./PalServer.sh 1> /dev/null'"
 
     # Wait for shutdown
     sleep 5
@@ -76,4 +85,9 @@ EOL
 
 printf "\e[0;32m*****STARTING SERVER*****\e[0m\n"
 echo "${STARTCOMMAND}"
-su steam -c "${STARTCOMMAND}"
+if [ "$architecture" == "arm" ] || [ "$architecture" == "aarch64" ]; then
+    su steam -c "FEXBash -c '${STARTCOMMAND}'"
+else
+    su steam -c "${STARTCOMMAND}"
+fi
+
