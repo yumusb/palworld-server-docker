@@ -1,7 +1,6 @@
 services:
    palworld:
-      build: 
-        dockerfile: ./Dockerfile.arm
+      image: thijsvanloef/palworld-server-docker:latest
       restart: unless-stopped
       container_name: palworld-server
       ports:
