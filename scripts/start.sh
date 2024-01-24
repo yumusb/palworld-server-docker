@@ -86,6 +86,7 @@ EOL
 printf "\e[0;32m*****STARTING SERVER*****\e[0m\n"
 echo "${STARTCOMMAND}"
 if [ "$architecture" == "arm" ] || [ "$architecture" == "aarch64" ]; then
+    echo "arm architecture detected, using FEXBash to start server"
     su steam -c "FEXBash -c '${STARTCOMMAND}'"
 else
     su steam -c "${STARTCOMMAND}"
