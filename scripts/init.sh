@@ -17,10 +17,10 @@ chown -R steam:steam /palworld
 
 if [ "${UPDATE_ON_BOOT}" = true ]; then
     printf "\e[0;32m*****STARTING INSTALL/UPDATE*****\e[0m\n"
-    command1='/home/steam/steamcmd/steamcmd.sh +force_install_dir "/palworld" +login anonymous +app_update 2394010 validate +quit'
+    command1='/home/steam/steamcmd/steamcmd.sh +force_install_dir /palworld +login anonymous +app_update 2394010 validate +quit'
     if [ "$architecture" == "arm" ] || [ "$architecture" == "aarch64" ]; then
         echo "arm architecture detected, using FEXBash to run steamcmd"
-        su steam -c "FEXBash -c '$command1'"
+        su steam -c "FEXBash -c \"$command1\""
     else
         su steam -c "$command1"
     fi
