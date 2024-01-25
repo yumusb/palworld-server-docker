@@ -66,7 +66,7 @@ RUN curl -sqL "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.t
 USER root
 
 RUN echo 'root:steamcmd' | chpasswd && \
-    wget -q https://github.com/itzg/rcon-cli/releases/download/1.6.4/rcon-cli_1.6.4_linux_amd64.tar.gz -O - | tar -xz && \
+    wget -q https://github.com/itzg/rcon-cli/releases/download/1.6.4/rcon-cli_1.6.4_linux_arm64.tar.gz -O - | tar -xz && \
     mv rcon-cli /usr/bin/rcon-cli
 
 ENV PORT= \
