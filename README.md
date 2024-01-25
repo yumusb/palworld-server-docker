@@ -1,3 +1,24 @@
+# Thanks  
++ https://github.com/TeriyakiGod/steamcmd-docker-arm64
++ https://github.com/thijsvanloef/palworld-server-docker.git
+
+
+# Usage:
+```shell
+# curl -fsSL https://get.docker.com | bash
+git clone https://github.com/yumusb/palworld-server-docker-arm.git
+cd palworld-server-docker-arm
+docker compose up -d 
+```
+
+-----  
+-----   
+-----  
+-----   
+-----  
+-----   
+-----  
+-----   
 # Palworld Dedicated Server Docker
 
 ![Release](https://img.shields.io/github/v/release/thijsvanloef/palworld-server-docker)
