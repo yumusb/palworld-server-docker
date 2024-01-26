@@ -2,6 +2,8 @@ services:
    palworld:
       build: 
         dockerfile: ./Dockerfile.arm
+      # image: yumusb/palworld-server-arm:test
+      # The docker image may not be up to date. If you don't want to spend time doing builds, try using.
       restart: unless-stopped
       ports:
         - 8211:8211/udp
