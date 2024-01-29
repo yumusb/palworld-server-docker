@@ -4,11 +4,35 @@
 
 
 # Usage:
+1. Install docker
 ```shell
-# curl -fsSL https://get.docker.com | bash
+curl -fsSL https://get.docker.com | bash
+```
+2. Clone the Palworld Server Docker repository
+```shell
 git clone https://github.com/yumusb/palworld-server-docker-arm.git
+```
+3. Navigate to the cloned directory
+```shell
 cd palworld-server-docker-arm
-docker compose up -d 
+```
+4. Rename the file `.env.example` to `.env`
+```shell
+mv .env.example .env
+```
+5. Edit the `.env` file to your liking
+```shell
+nano .env
+```
+6. Start the server
+```shell
+docker-compose up -d
+```
+The -d flag runs the containers in the background.
+
+7. Stop the server
+```shell
+docker-compose down
 ```
 
 -----  
