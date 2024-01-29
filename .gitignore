@@ -2,3 +2,4 @@ palworld
 .idea
 values*.yaml
 !chart/values.yaml
+.env
